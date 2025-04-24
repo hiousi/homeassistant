@@ -16,17 +16,11 @@ blueprint:
     Séquence :
 
     - tout est éteint au début
-
     - script exécuté -> scène "ambiente"
-
     - script exécuté à nouveau -> scène "medium"
-
     - un peu plus tard (plus longtemps que le temps de réinitialisation)
-
     - script exécuté -> tout éteindre
-
     - un peu plus tard (plus longtemps que le temps de réinitialisation)
-    
     - script exécuté -> scène "medium"
 
     **Version**: 1.0
