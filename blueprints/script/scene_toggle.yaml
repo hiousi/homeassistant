@@ -25,7 +25,7 @@ blueprint:
 
     **Version**: 1.0
 
-  source_url: https://github.com/hiousi/homeassistant/blueprints/script/scene_toggle.yaml
+  source_url: https://github.com/hiousi/homeassistant/blob/main/blueprints/script/scene_toggle.yaml
   domain: script
 
   input:
