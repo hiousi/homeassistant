@@ -1,0 +1,114 @@
+blueprint:
+  name: scene-toggle
+  description: >
+
+    Ce script est basé sur le travail incroyable de panhans avec son script
+    [Simple Scene Toggle](https://community.home-assistant.io/t/simple-scene-toggle).
+
+    Vous pouvez basculer vos lumières (et autres appareils) avec ce script entre allumé et éteint. 
+    Pour l'état allumé, des scènes sont utilisées. Avec plusieurs exécutions (avant le temps de réinitialisation),
+    ce script fera tourner vos scènes dans l'ordre donné. La dernière scène allumée sera mémorisée.
+
+    ## Exemple
+
+    Scènes sélectionnées : "ambiente", "medium", "bright"
+
+    Séquence :
+
+    - tout est éteint au début
+    - script exécuté -> scène "ambiente"
+    - script exécuté à nouveau -> scène "medium"
+    - un peu plus tard (plus longtemps que le temps de réinitialisation)
+    - script exécuté -> tout éteindre
+    - un peu plus tard (plus longtemps que le temps de réinitialisation)
+    - script exécuté -> scène "medium"
+
+    **Version**: 1.0
+
+  source_url: https://github.com/hiousi/homeassistant/blueprints/script/scene_toggle.yaml
+  domain: script
+
+  input:
+
+    on_scenes:
+      name: On Scenes
+      description: Scenes for on state
+      default: []
+      selector:
+        entity:
+          filter:
+            domain: scene
+          multiple: true
+    
+    off_scene:
+      name: Off Scene
+      description: Scene for off state
+      default: []
+      selector:
+        entity:
+          filter:
+            domain: scene
+          multiple: false
+
+    transition:
+      name: Transition time
+      description: Transition time when switching between scenes
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 10
+          step: 0.1
+          unit_of_measurement: s
+
+    reset_time:
+      name: Reset Time
+      description: After the reset time, the script will toggle between off and the last scene instead
+        of switching between the scenes.
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 120
+          step: 1
+          unit_of_measurement: s
+
+mode: queued
+
+variables:
+  on_scenes: !input "on_scenes"
+  off_scene: !input "off_scene"
+  reset_time: !input "reset_time"
+  last_triggered: >
+    {{ as_timestamp(
+        state_attr(this.entity_id,'last_triggered')
+        or now()
+      )
+    }}
+
+sequence:
+  - service: scene.turn_on
+    data_template:
+      transition: !input transition
+      entity_id: >
+        {% set is_reset = (as_timestamp(now()) - last_triggered) >= reset_time %}
+        {% set all_scenes = on_scenes + [off_scene] %}
+        {% set all_scenes_sorted = (expand(all_scenes) | rejectattr('state','equalto','unknown') | sort(attribute='state', reverse=true)) %}
+        {% set last_scene = ((all_scenes_sorted | length) > 0 and all_scenes_sorted[0].entity_id) or off_scene %}
+        {% set on_scenes_sorted = (expand(on_scenes) | rejectattr('state','equalto','unknown') | sort(attribute='state', reverse=true)) %}
+        {% set last_on_scene = ((on_scenes_sorted | length) > 0 and on_scenes_sorted[0].entity_id) or on_scenes[0] %}
+        {% set is_on = (last_scene != off_scene) %}
+
+        {% if is_reset %}
+          {# toggle between off ↔ last on scene #}
+          {% if is_on %}
+            {{ off_scene }}
+          {% else %}
+            {{ last_on_scene }}
+          {% endif %}
+        {% else %}
+          {# switch to next scene (including off scene) #}
+          {% set index = all_scenes.index(last_scene) %}
+          {% set next_index = (index + 1) % (all_scenes | count) %}
+          {{ all_scenes[next_index] }}
+        {% endif %}
