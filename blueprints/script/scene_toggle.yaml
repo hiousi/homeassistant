@@ -1,5 +1,5 @@
 blueprint:
-  name: scene-toggle
+  name: Scene Toggle
   description: |
 
     This script is based on the incredible work of panhans with his script [Simple Scene Toggle](https://community.home-assistant.io/t/simple-scene-toggle).
