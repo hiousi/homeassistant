@@ -190,24 +190,33 @@ condition:
   - "{{ trigger.to_state.attributes.event_type != '' }}"
 
 action:
-    - variables:
-        event_type: "{{ trigger.to_state.attributes.event_type }}"
-        button_actions:
-            "1_single": !input button_one_short_press
-            "1_double": !input button_one_double_press
-            "1_hold": !input button_one_long_press
-            "2_single": !input button_two_short_press
-            "2_double": !input button_two_double_press
-            "2_hold": !input button_two_long_press
-            "3_single": !input button_three_short_press
-            "3_double": !input button_three_double_press
-            "3_hold": !input button_three_long_press
-            "4_single": !input button_four_short_press
-            "4_double": !input button_four_double_press
-            "4_hold": !input button_four_long_press  
-    - choose:
-      - conditions:
-          - condition: template
-            value_template: "{{ event_type in button_actions }}"
-        action: "{{ button_actions[event_type] }}"
-      default: []
+  - choose:
+      # Button 1 Actions
+      - conditions: "{{ event_type == '1_single' }}"
+        sequence: !input button_one_short_press
+      - conditions: "{{ event_type == '1_double' }}"
+        sequence: !input button_one_double_press
+      - conditions: "{{ event_type == '1_hold' }}"
+        sequence: !input button_one_long_press
+      # Button 2 Actions
+      - conditions: "{{ event_type == '2_single' }}"
+        sequence: !input button_two_short_press
+      - conditions: "{{ event_type == '2_double' }}"
+        sequence: !input button_two_double_press
+      - conditions: "{{ event_type == '2_hold' }}"
+        sequence: !input button_two_long_press
+      # Button 3 Actions
+      - conditions: "{{ event_type == '3_single' }}"
+        sequence: !input button_three_short_press
+      - conditions: "{{ event_type == '3_double' }}"
+        sequence: !input button_three_double_press
+      - conditions: "{{ event_type == '3_hold' }}"
+        sequence: !input button_three_long_press
+      # Button 4 Actions
+      - conditions: "{{ event_type == '4_single' }}"
+        sequence: !input button_four_short_press
+      - conditions: "{{ event_type == '4_double' }}"
+        sequence: !input button_four_double_press
+      - conditions: "{{ event_type == '4_hold' }}"
+        sequence: !input button_four_long_press
+    default: []
