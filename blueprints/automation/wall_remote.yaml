@@ -1,0 +1,250 @@
+blueprint:
+
+    name: wall-remote
+    description: |
+        # Wall Remote Automation Blueprint
+
+        This blueprint provides automation for the **Moes / Tuya TS0044 Zigbee Wireless Switch**, supporting up to 4 buttons. It allows you to define actions for **single press**, **double press**, and **long press** for each button, making it highly customizable for various use cases.
+
+        ## Features
+
+        - **Supports up to 4 buttons**: Configure actions for each button individually.
+        - **Multiple press types**: Define actions for:
+          - Single press
+          - Double press
+          - Long press
+        - **Flexible automation modes**: Choose from `single`, `restart`, `queued`, or `parallel` modes for handling automation execution.
+        - **Zigbee compatibility**: Works seamlessly with Zigbee2MQTT for the TS0044 device.
+        - **Customizable actions**: Assign any Home Assistant action to each button press type.
+
+        ## How to Use the Wall Remote Blueprint
+        
+        1. **Import the Blueprint**:
+           - Open the **Home Assistant UI**.
+           - Navigate to **Settings > Automations & Scenes > Blueprints**.
+           - Click on the **"Import Blueprint"** button in the top-right corner.
+           - Paste the following URL:  
+             [https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote.yaml](https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote.yaml).
+           - Click **Preview Blueprint** and then **Import Blueprint**.
+        
+        2. **Create an Automation**:
+           - Go to **Settings > Automations & Scenes > Blueprints**.
+           - Select the **Wall Remote** blueprint from the list.
+           - Click **Create Automation**.
+        
+        3. **Configure Inputs**:
+           - Select the **Zigbee event entity** for your wall remote.
+           - Define actions for each button press type:
+             - **Single Press**
+             - **Double Press**
+             - **Long Press**
+           - Repeat for all buttons (up to 4).
+        
+        4. **Set Automation Mode**:
+           - Choose the desired automation mode (`single`, `restart`, `queued`, or `parallel`) based on your use case.
+        
+        5. **Save and Activate**:
+           - Save the automation and ensure it is enabled.
+           - Test the wall remote to verify the configured actions.
+        
+        ## Notes
+
+        - Ensure the Zigbee event entity is correctly configured in Home Assistant zigbee2mqtt integration.
+        - Refer to the [Zigbee2MQTT TS0044 documentation](https://www.zigbee2mqtt.io/devices/TS0044.html#tuya-ts0044) for additional details about the device.
+
+      
+    domain: automation
+    
+    source_url: https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote.yaml
+    input:
+    
+
+        mode:
+          name: Automation Modes
+          description: https://www.home-assistant.io/docs/automation/modes/
+          default: parallel
+          selector:
+            select:
+              mode: dropdown
+              options:
+                - single
+                - restart
+                - queued
+                - parallel
+              multiple: false
+              custom_value: false
+              sort: false
+        
+        wall_remote_event:
+          name: Wall remote Zigbee event
+          description: remote zigbee event
+          selector:
+                entity:
+                    multiple: true
+                    domain: event
+                
+                
+        button_1:
+            name: Button 1 (left up)
+            icon: mdi:button-pointer
+            collapsed: true
+            input:
+                button_one_short_press:
+                    name: Single Press - Button 1
+                    description: Action to run on Button 1 - Single Press
+                    default: []
+                    selector:
+                        action: {}
+                button_one_double_press:
+                    name: Dougle Press - Button 1
+                    description: Action to run on Button 1 - Dougle Press
+                    default: []
+                    selector:
+                        action: {}
+                button_one_long_press:
+                    name: Long Press - Button 1
+                    description: Action to run on Button 1 - Long Press
+                    default: []
+                    selector:
+                        action: {}
+        button_2:
+            name: Button 2 (right up)
+            icon: mdi:button-pointer
+            collapsed: true
+            input:                     
+                button_two_short_press:
+                    name: Single Press - Button 2
+                    description: Action to run on Button 2 - Single Press
+                    default: []
+                    selector:
+                        action: {}
+                button_two_double_press:
+                    name: Double Press - Button 2
+                    description: Action to run on Button 2 - Double Press
+                    default: []
+                    selector:
+                        action: {}
+                button_two_long_press:
+                    name: Long Press  - Button 2
+                    description: Action to run on Button 2 - Long Press
+                    default: []
+                    selector:
+                        action: {}
+        button_3:
+            name: Button 3 (left down)
+            icon: mdi:button-pointer
+            collapsed: true
+            input:  
+                button_three_short_press:
+                    name: Single Press - Button 3
+                    description: Action to run on Button 3 - Single Press
+                    default: []
+                    selector:
+                        action: {}
+                button_three_double_press:
+                    name: Double Press - Button 3
+                    description: Action to run on Button 3 - Double Press
+                    default: []
+                    selector:
+                        action: {}
+                button_three_long_press:
+                    name: Long Press - Button 3
+                    description: Action to run on Button 3 - Long Press
+                    default: []
+                    selector:
+                        action: {}
+                    
+        button_4:
+            name: Button 4 (right down)
+            icon: mdi:button-pointer
+            collapsed: true
+            input:
+                button_four_short_press:
+                    name: Single Press - Button 4
+                    description: Action to run on Button 4 - Single Press
+                    default: []
+                    selector:
+                        action: {}
+                button_four_double_press:
+                    name: Double Press - Button 4
+                    description: Action to run on Button 4 - Double Press
+                    default: []
+                    selector:
+                        action: {}
+                button_four_long_press:
+                    name: Long Press - Button 4
+                    description: Action to run on Button 4 - Long Press
+                    default: []
+                    selector:
+                        action: {}
+                
+mode: !input mode
+ 
+trigger: 
+    - platform: state
+      entity_id: !input wall_remote_event
+      not_from: unavailable
+      not_to: unavailable
+      
+condition:
+  - "{{ trigger.to_state.attributes.event_type != '' }}"
+
+action:
+    - variables:
+        event_type: "{{ trigger.to_state.attributes.event_type }}"      
+    - choose:
+        # button 1
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '1_single' }}"
+          sequence: !input button_one_short_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '1_double' }}"
+          sequence: !input button_one_double_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '1_hold' }}"
+          sequence: !input button_one_long_press
+          
+        # button 2
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '2_single' }}"
+          sequence: !input button_two_short_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '2_double' }}"
+          sequence: !input button_two_double_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '2_hold' }}"
+          sequence: !input button_two_long_press
+
+        # button 3
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '3_single' }}"
+          sequence: !input button_three_short_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '3_double' }}"
+          sequence: !input button_three_double_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '3_hold' }}"
+          sequence: !input button_three_long_press
+          
+        # button 4
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '4_single' }}"
+          sequence: !input button_four_short_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '4_double' }}"
+          sequence: !input button_four_double_press
+        - conditions:
+            - condition: template
+              value_template: "{{ event_type == '4_hold' }}"
+          sequence: !input button_four_long_press

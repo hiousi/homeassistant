@@ -2,26 +2,25 @@ blueprint:
   name: scene-toggle
   description: |
 
-    Ce script est basé sur le travail incroyable de panhans avec son script
-    [Simple Scene Toggle](https://community.home-assistant.io/t/simple-scene-toggle).
+    This script is based on the incredible work of panhans with his script [Simple Scene Toggle](https://community.home-assistant.io/t/simple-scene-toggle).
 
-    Vous pouvez basculer vos lumières (et autres appareils) avec ce script entre allumé et éteint. 
-    Pour l'état allumé, des scènes sont utilisées. Avec plusieurs exécutions (avant le temps de réinitialisation),
-    ce script fera tourner vos scènes dans l'ordre donné. La dernière scène allumée sera mémorisée.
+    You can toggle your lights (and other devices) with this script between on and off states. 
+    It is designed to be used with scenes. It can be used to turn lights on and off, but it is also possible to use it for other devices.
+    For the on state, scenes are used. With multiple executions (before the reset time), this script will cycle through your scenes in the given order. The last activated scene will be remembered.
 
-    ## Exemple
+    ## Example
 
-    Scènes sélectionnées : "ambiente", "medium", "bright"
+    Selected scenes: "ambiente", "medium", "bright"
 
-    Séquence :
+    Sequence:
 
-    - tout est éteint au début
-    - script exécuté -> scène "ambiente"
-    - script exécuté à nouveau -> scène "medium"
-    - un peu plus tard (plus longtemps que le temps de réinitialisation)
-    - script exécuté -> tout éteindre
-    - un peu plus tard (plus longtemps que le temps de réinitialisation)
-    - script exécuté -> scène "medium"
+    - Everything is off at the beginning
+    - Script executed -> "ambiente" scene
+    - Script executed again -> "medium" scene
+    - A little later (longer than the reset time)
+    - Script executed -> everything turns off
+    - A little later (longer than the reset time)
+    - Script executed -> "medium" scene
 
     **Version**: 1.0
 
