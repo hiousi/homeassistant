@@ -1,8 +1,7 @@
 blueprint:
-
-    name: wall-remote
+    name: Wall Remote TS0044
     description: |
-        # Wall Remote Automation Blueprint
+        # TS0044 2 to 4 buttons scene switch Automation Blueprint
 
         This blueprint provides automation for the **Moes / Tuya TS0044 Zigbee Wireless Switch**, supporting up to 4 buttons. It allows you to define actions for **single press**, **double press**, and **long press** for each button, making it highly customizable for various use cases.
 
@@ -22,10 +21,10 @@ blueprint:
         1. **Import the Blueprint**:
            - Open the **Home Assistant UI**.
            - Navigate to **Settings > Automations & Scenes > Blueprints**.
-           - Click on the **"Import Blueprint"** button in the top-right corner.
+           - Click on the **"Import Blueprint"** button in the bottom-right corner.
            - Paste the following URL:  
-             [https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote.yaml](https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote.yaml).
-           - Click **Preview Blueprint** and then **Import Blueprint**.
+             [https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote_ts0044.yaml](https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote_ts0044.yaml).
+           - Click **Preview** and then **Import Blueprint**.
         
         2. **Create an Automation**:
            - Go to **Settings > Automations & Scenes > Blueprints**.
@@ -49,13 +48,14 @@ blueprint:
         
         ## Notes
 
-        - Ensure the Zigbee event entity is correctly configured in Home Assistant zigbee2mqtt integration.
+        - Verify that the **Zigbee2MQTT** integration is set up correctly in your Home Assistant instance.
+        - Ensure the Zigbee event entity is correctly configured in Home Assistant zigbee2mqtt integration (beta feature at time of writing).
         - Refer to the [Zigbee2MQTT TS0044 documentation](https://www.zigbee2mqtt.io/devices/TS0044.html#tuya-ts0044) for additional details about the device.
 
       
     domain: automation
     
-    source_url: https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote.yaml
+    source_url: https://github.com/hiousi/homeassistant/blob/main/blueprints/automation/wall_remote_ts0044.yaml
     input:
     
 
