@@ -248,3 +248,4 @@ action:
             - condition: template
               value_template: "{{ event_type == '4_hold' }}"
           sequence: !input button_four_long_press
+      default: []
