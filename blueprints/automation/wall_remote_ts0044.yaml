@@ -204,7 +204,7 @@ action:
             "3_hold": !input button_three_long_press
             "4_single": !input button_four_short_press
             "4_double": !input button_four_double_press
-            "4_hold": !input button_four_long_press"   
+            "4_hold": !input button_four_long_press  
     - choose:
       - conditions:
           - condition: template
