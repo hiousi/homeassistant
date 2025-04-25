@@ -1,7 +1,7 @@
 blueprint:
     name: Wall Remote TS0044
     description: |
-        # TS0044 2 to 4 buttons scene switch Automation Blueprint
+        # TS0044 1 to 4 buttons scene switch Automation Blueprint
 
         This blueprint provides automation for the **Moes / Tuya TS0044 Zigbee Wireless Switch**, supporting up to 4 buttons. It allows you to define actions for **single press**, **double press**, and **long press** for each button, making it highly customizable for various use cases.
 
@@ -16,7 +16,7 @@ blueprint:
         - **Zigbee compatibility**: Works seamlessly with Zigbee2MQTT for the TS0044 device.
         - **Customizable actions**: Assign any Home Assistant action to each button press type.
 
-        ## How to Use the Wall Remote Blueprint
+        ## Install and use
         
         1. **Import the Blueprint**:
            - Open the **Home Assistant UI**.
