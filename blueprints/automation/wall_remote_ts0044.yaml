@@ -209,5 +209,5 @@ action:
       - conditions:
           - condition: template
             value_template: "{{ event_type in button_actions }}"
-        sequence: "{{ button_actions[event_type] }}"
+        action: "{{ button_actions[event_type] }}"
       default: []
