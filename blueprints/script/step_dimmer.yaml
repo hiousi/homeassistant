@@ -1,0 +1,123 @@
+blueprint:
+    name: Step Dimmer
+    description: |
+        ## Step Dimmer • On/Off Toggle after Reset Time
+        Cycles the brightness of one or more lights in discrete steps.  
+        If the script is triggered again **after the chosen reset time**,
+        it behaves as a *toggle* (all lights off ↔ first brightness step).
+
+        Typical use cases
+          • Bind to a remote button  
+          • Call from an automation (e.g. motion sensor)  
+          • Add a Lovelace button for quick “step-dim” control
+
+        **Version** 1.5 — 2025-04-25
+    author: https://github.com/hiousi         
+    domain: script
+    
+    input: 
+        lights:
+            name: Lights
+            description: Select a light entity or group that supports brightness.
+            selector:
+                target:
+                    entity:
+                      domain: 
+                       - light
+                       - group
+                    
+        steps:
+            name: Brightness steps
+            description: |
+                    List of brightness values (1–254) to cycle through.
+                    Leave empty to use the default **[15, 128, 190, 254]**.
+            default: [15, 128, 190, 254]      
+            
+            
+        
+        transition:
+             name: Transition time (s)
+             description: Fade time for light.turn_on/off.
+             default: 0
+             selector:
+               number:
+                 min: 0
+                 max: 5
+                 step: 0.1
+                 unit_of_measurement: s    
+                 
+        reset_time:
+              name: Reset time (s)
+              description: >
+                If the script is executed again *after* this many seconds,
+                it toggles Off ↔ On (first step) instead of changing to the next step.
+              default: 5
+              selector:
+                number:
+                  min: 0
+                  max: 120
+                  step: 1
+                  unit_of_measurement: s
+                  
+mode: queued # queue extra calls if one is still running
+max: 50
+
+variables:
+        # because of the target selector thank you DefenestrateIT https://community.home-assistant.io/t/wth-howto-reference-a-device-areas-state-on-off-unavailable-with-a-target-selector/484428/43
+        lights: !input lights
+        reset_time: !input reset_time
+        transition: !input transition
+        steps: !input steps
+        last_triggered: "{{ as_timestamp(state_attr(this.entity_id, 'last_triggered') or now()) }}"
+        is_reset: "{{ (as_timestamp(now()) - last_triggered) >= reset_time }}"
+        entities: >
+             {%- set ns = namespace(ret=[]) %}
+             {%- for key in ['device_id', 'area_id', 'entity_id'] %}
+               {%- set items = lights.get(key, [])  %}
+               {%- if items %}
+                 {%- set items = [ items ] if items is string else items %}
+                 {%- set filt = key.split('_') | first %}
+                 {%- set items = items if filt == 'entity' else items | map(filt ~ '_entities') | sum(start=[]) %}
+                 {%- set ns.ret = ns.ret + [ items ] %}
+               {%- endif %}
+             {%- endfor %}
+             {{ ns.ret | sum(start=[]) }}
+        on_lights: "{{ entities | select( 'search' , '^light' ) | select('is_state', 'on') | list }}"
+        any_on: "{{ on_lights | count > 0 }}"
+        max_brightness: "{{ (on_lights | map('state_attr', 'brightness') | map('default', 0) | list + [0] ) | max  }}"
+        next_brightness: "{{ (steps | select('gt', max_brightness) | list | first) | default(steps[0]) }}"
+
+sequence:
+    
+        
+    - choose:
+        # 1. Outside reset window + some light ON  →  turn everything OFF 
+        - conditions: "{{ is_reset and any_on }}"
+          sequence:
+                - action: light.turn_off
+                  target: !input lights
+                  data:
+                     transition: "{{ transition }}"
+        # 2. Inside reset window + some light ON  →  step brightness
+        - conditions: "{{ not is_reset and any_on }}"
+          sequence:
+                - action: light.turn_on
+                  target: !input lights
+                  data:
+                     brightness: "{{ next_brightness }}"
+                     transition: "{{ transition  }}"   
+        # 3. Outside reset window + no light ON  →  simply turn ON
+        - conditions: "{{ is_reset and not any_on }}"
+          sequence:
+                - action: light.turn_on
+                  target: !input lights
+                  data:
+                     transition: "{{ transition  }}"
+      # 4. Inside reset window + no light ON  →  simply turn ON  (default branch)
+      default:
+            - action: light.turn_on
+              target: !input lights
+              data:
+                transition: "{{ transition  }}"   
+
+                  
