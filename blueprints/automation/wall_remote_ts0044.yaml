@@ -62,7 +62,7 @@ blueprint:
         mode:
           name: Automation Modes
           description: Recommanded "restart" but you can change: https://www.home-assistant.io/docs/automation/modes/
-          default: parallel
+          default: restart
           selector:
             select:
               mode: dropdown
@@ -71,7 +71,6 @@ blueprint:
                 - restart
                 - queued
                 - parallel
-              default: restart
               multiple: false
               custom_value: false
               sort: false
