@@ -61,7 +61,7 @@ blueprint:
 
         mode:
           name: Automation Modes
-          description: Recommanded "restart" but you can change: https://www.home-assistant.io/docs/automation/modes/
+          description: Restart is recommanded for buttons.  https://www.home-assistant.io/docs/automation/modes/
           default: restart
           selector:
             select:
