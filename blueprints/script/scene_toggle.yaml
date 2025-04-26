@@ -26,7 +26,9 @@ blueprint:
 
   source_url: https://github.com/hiousi/homeassistant/blob/main/blueprints/script/scene_toggle.yaml
   domain: script
-
+  
+  mode: restart
+  
   input:
 
     on_scenes:
@@ -72,7 +74,7 @@ blueprint:
           step: 1
           unit_of_measurement: s
 
-mode: queued
+
 
 variables:
   on_scenes: !input "on_scenes"
