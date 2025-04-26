@@ -27,8 +27,6 @@ blueprint:
   source_url: https://github.com/hiousi/homeassistant/blob/main/blueprints/script/scene_toggle.yaml
   domain: script
   
-  mode: restart
-  
   input:
 
     on_scenes:
