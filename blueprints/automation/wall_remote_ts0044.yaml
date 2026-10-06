@@ -3,6 +3,8 @@ blueprint:
     description: |
         # TS0044 1 to 4 buttons scene switch Automation Blueprint
 
+        **Version: 1.1**
+
         This blueprint provides automation for the **Moes / Tuya TS0044 Zigbee Wireless Switch**, supporting up to 4 buttons. It allows you to define actions for **single press**, **double press**, and **long press** for each button, making it highly customizable for various use cases.
 
         ## Features
@@ -51,6 +53,16 @@ blueprint:
         - Verify that the **Zigbee2MQTT** integration is set up correctly in your Home Assistant instance.
         - Ensure the Zigbee event entity is correctly configured in Home Assistant zigbee2mqtt integration (beta feature at time of writing).
         - Refer to the [Zigbee2MQTT TS0044 documentation](https://www.zigbee2mqtt.io/devices/TS0044.html#tuya-ts0044) for additional details about the device.
+
+        ## Release history
+
+        ### 1.1 — 2026-10-06
+            - Added compatibility with Zigbee2MQTT 2.14.2+.
+            - Adapted to the new Home Assistant action event format using separate `button` and `event_type` attributes.
+            - Maintains compatibility with the previous event format.
+        
+        ### 1.0
+            - Initial release.
 
       
     domain: automation
@@ -191,7 +203,14 @@ condition:
 
 action:
   - variables:
-      event_type: "{{ trigger.to_state.attributes.event_type }}"
+      event_type: >-
+        {% set button = trigger.to_state.attributes.button | default('') %}
+        {% set action = trigger.to_state.attributes.event_type | default('') %}
+        {% if button != '' and action in ['single', 'double', 'hold'] %}
+          {{ button }}_{{ action }}
+        {% else %}
+          {{ action }}
+        {% endif %}
   - choose:
       # Button 1 Actions
       - conditions: "{{ event_type == '1_single' }}"
